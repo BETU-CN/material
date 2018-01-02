@@ -1,0 +1,29 @@
+#!/bin/bash
+
+url="https://gupiao.baidu.com/stock/sz000833.html?from=aladingpc"
+cap="_close"
+
+price=""
+
+for i in `seq 20`
+do
+price=$(curl -s $url | grep $cap)
+    
+    if [ -n "$price" ];then
+    echo "---get info at loop:$i---"
+    break 2
+    fi
+
+done
+
+echo -e "---price(before) is\n $price"
+price=${price#*>}
+price=${price%<*}
+echo -e "---price(after)  is:$price---"
+
+stock="gtgf"
+
+if [ `expr 7 \> $price` -eq 0 ];then
+echo "yes"
+python /tmp/pyt/dysms_python/api_demo/alicom-python-sdk-dysmsapi/sms.py $stock $price
+fi
